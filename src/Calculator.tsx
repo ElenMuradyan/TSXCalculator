@@ -1,68 +1,61 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "./components/Button";
+import '../src/styles/calculator.css';
+import { Flex, Typography } from "antd";
+
+const { Title } = Typography;
 
 const Calculator = () => {
     const [input, setInput] = useState<string>('');
-    const [n1, setn1] = useState<number | null>(null);
-    const [operator, setOpertor] = useState<string>('');
-    const [n2, setn2] = useState<number | null>(null);
+    const [isDecimal, setIsDecimal] = useState<boolean>(false);
+
+    const handleResult = () => {
+        try {
+            const result = eval(input);
+            setInput(result.toString());
+        } catch (error) {
+            setInput('');
+        }    
+    }
 
     const handleCalculate = (value: string) => {
         if(value === 'C'){
             setInput('');
-            setn1(null);
-            setn2(null);
-            setOpertor('');
+            setIsDecimal(false);
         }else if(value === '='){
-            let result: number = 0;
-            if(n1 !== null && n2 !== null && operator){
-                switch (operator) {
-                    case '+':
-                      result = n1 + n2;
-                      break;
-                    case '-':
-                      result = n1 - n2;
-                      break;
-                    case '*':
-                      result = n1 * n2;
-                      break;
-                    case '/':
-                      result = n2 !== 0 ? n1 / n2 : 0;
-                      break;
-                    default:
-                      break;
-                  }
-                  setOpertor('');
-                  setn2(null);
-                  setn1(result);
-                  setInput(result.toString());
-            }
+            handleResult();
+            setIsDecimal(input.includes('.'));
         }else if(['+', '-', '*', '/'].includes(value)){
-            setOpertor(value)
-            setInput('');
-        }else{
-            if(operator){
-                if(n2 !== null){
-                    setn2(Number(n2.toString() + value));
-                }else{
-                    setn2(Number(value))
-                }
-                setInput(input+value)
-            }else{
-                if(n1 !== null){
-                    setn1(Number(n1.toString() + value));
-                }else{
-                    setn1(Number(value))
-                }
-                setInput(input+value)
+            if(input && !['+', '-', '*', '/'].includes(input[input.length-1])){
+                setInput(input + value);
             }
-        }
+        }else{
+            if(value === '.' && !isDecimal){
+                setInput(input + value);
+                setIsDecimal(true);
+            }else if (value !== '.') {
+                if(input[input.length-1] === '0'){
+                    setInput(value);
+                }else{
+                    setInput(input+value)
+                }
+            }
+    }};
+
+    const handleDelete = () => {
+        if (input[input.length - 1] === '.') {
+            setIsDecimal(false); 
+        };
+
+        setInput(input.slice(0,-1));
     }
 
     return(
-        <div className="calculator">
-      <div className="calculator-display">{input}</div>
-      <div className="calculator-buttons">
+        <Flex vertical gap={10} align="center" justify="center" className="calculator_container">
+      <Flex className="input" vertical>
+        <Title level={2} style={{color: 'white'}}>{input}</Title>
+      </Flex>
+      <div className="buttons">
         <Button label="1" onClick={() => handleCalculate('1')} />
         <Button label="2" onClick={() => handleCalculate('2')} />
         <Button label="3" onClick={() => handleCalculate('3')} />
@@ -78,13 +71,17 @@ const Calculator = () => {
         <Button label="9" onClick={() => handleCalculate('9')} />
         <Button label="*" onClick={() => handleCalculate('*')} />
 
-        <Button label="C" onClick={() => handleCalculate('C')} />
         <Button label="0" onClick={() => handleCalculate('0')} />
+        <Button label="C" onClick={() => handleCalculate('C')} />
+
         <Button label="=" onClick={() => handleCalculate('=')} />
         <Button label="/" onClick={() => handleCalculate('/')} />
-        <Button label="C" onClick={() => handleCalculate('C')} />
       </div>
-    </div>
+      <Flex className="bottom">
+      <Button label="." onClick={() => handleCalculate('.')} />
+      <Button label="←" onClick={() => handleDelete()} />
+      </Flex>
+    </Flex>
     )
 }
 

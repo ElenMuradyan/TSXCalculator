@@ -1,11 +1,12 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Flex } from 'antd';
+import Calculator from './Calculator';
+import './styles/global.css';
 
 function App() {
   return (
-    <div className="App">
-    </div>
+    <Flex align='center' justify='center' className="App">
+      <Calculator/>
+    </Flex>
   );
 }
 
