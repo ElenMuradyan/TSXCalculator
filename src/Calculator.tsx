@@ -8,7 +8,55 @@ const Calculator = () => {
     const [n2, setn2] = useState<number | null>(null);
 
     const handleCalculate = (value: string) => {
-
+        if(value === 'C'){
+            setInput('');
+            setn1(null);
+            setn2(null);
+            setOpertor('');
+        }else if(value === '='){
+            let result: number = 0;
+            if(n1 !== null && n2 !== null && operator){
+                switch (operator) {
+                    case '+':
+                      result = n1 + n2;
+                      break;
+                    case '-':
+                      result = n1 - n2;
+                      break;
+                    case '*':
+                      result = n1 * n2;
+                      break;
+                    case '/':
+                      result = n2 !== 0 ? n1 / n2 : 0;
+                      break;
+                    default:
+                      break;
+                  }
+                  setOpertor('');
+                  setn2(null);
+                  setn1(result);
+                  setInput(result.toString());
+            }
+        }else if(['+', '-', '*', '/'].includes(value)){
+            setOpertor(value)
+            setInput('');
+        }else{
+            if(operator){
+                if(n2 !== null){
+                    setn2(Number(n2.toString() + value));
+                }else{
+                    setn2(Number(value))
+                }
+                setInput(input+value)
+            }else{
+                if(n1 !== null){
+                    setn1(Number(n1.toString() + value));
+                }else{
+                    setn1(Number(value))
+                }
+                setInput(input+value)
+            }
+        }
     }
 
     return(
